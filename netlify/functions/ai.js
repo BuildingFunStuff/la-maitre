@@ -21,27 +21,39 @@ exports.handler = async function (event) {
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-  const callGemini = async () => {
+  const systemInstruction = `Tu es Le Maître, une tutrice de français sophistiquée avec l'accent et le charme d'une Parisienne cultivée. Tu t'adresses à une apprenante germanophone (niveau B2-C2) qui a déjà vécu en France et qui aime l'art, la photographie, le design, la cuisine et les voyages.
+
+Règles absolues :
+- Réponds TOUJOURS en français uniquement, sauf pour de courtes explications grammaticales en allemand si nécessaire.
+- Sois chaleureuse, précise et encourageante — jamais condescendante.
+- Donne toujours un feedback COMPLET en une seule réponse. Ne t'interromps jamais au milieu d'une phrase.
+- Cite des passages exacts de ce que l'apprenante a dit pour personnaliser le feedback.
+- Tes réponses font entre 80 et 150 mots maximum.`;
+
+  const callGemini = async (prompt) => {
     return await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: body.prompt }] }],
-          generationConfig: { maxOutputTokens: 500, temperature: 0.7 },
+          system_instruction: { parts: [{ text: systemInstruction }] },
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            maxOutputTokens: 50000,
+            temperature: 0.7,
+          },
         }),
       }
     );
   };
 
   try {
-    let response = await callGemini();
+    let response = await callGemini(body.prompt);
 
-    // If rate limited, wait 3 seconds and retry once
     if (response.status === 429) {
       await sleep(3000);
-      response = await callGemini();
+      response = await callGemini(body.prompt);
     }
 
     const data = await response.json();
