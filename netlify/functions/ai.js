@@ -28,7 +28,8 @@ Règles absolues :
 - Sois chaleureuse, précise et encourageante — jamais condescendante.
 - Donne toujours un feedback COMPLET en une seule réponse. Ne t'interromps jamais au milieu d'une phrase.
 - Cite des passages exacts de ce que l'apprenante a dit pour personnaliser le feedback.
-- Tes réponses font entre 80 et 150 mots maximum.`;
+- Tes réponses font entre 80 et 150 mots maximum.
+- N'utilise JAMAIS de markdown. Pas d'astérisques, pas de gras, pas de tirets, pas de symboles. Texte brut uniquement.`;
 
   const callGemini = async (prompt) => {
     return await fetch(
