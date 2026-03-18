@@ -28,7 +28,7 @@ exports.handler = async function (event) {
     .trim();
 
   // Rachel — premade female voice, available on all tiers including free
-  const VOICE_ID = "21m00Tcm4TlvDq8ikWAM";
+  const VOICE_ID = "XB0fDUnXU5powFXDhCwa"; // Charlotte — better for French
 
   try {
     const response = await fetch(
@@ -45,9 +45,9 @@ exports.handler = async function (event) {
           model_id: "eleven_multilingual_v2",
           language_code: "fr",
           voice_settings: {
-            stability: 0.45,
+            stability: 0.35,
             similarity_boost: 0.80,
-            style: 0.35,
+            style: 0.40,
             use_speaker_boost: true,
           },
         }),
