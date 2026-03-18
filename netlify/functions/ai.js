@@ -19,9 +19,11 @@ exports.handler = async function (event) {
     return { statusCode: 500, body: "API key not configured" };
   }
 
-  try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  const callGemini = async () => {
+    return await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -31,6 +33,16 @@ exports.handler = async function (event) {
         }),
       }
     );
+  };
+
+  try {
+    let response = await callGemini();
+
+    // If rate limited, wait 3 seconds and retry once
+    if (response.status === 429) {
+      await sleep(3000);
+      response = await callGemini();
+    }
 
     const data = await response.json();
     const text =
